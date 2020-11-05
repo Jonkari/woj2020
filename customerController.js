@@ -9,7 +9,7 @@ var connection = mysql.createConnection({
     host : 'localhost', // tietokantapalvelimen osoite
     port : 3307, //oletuksena käyttää porttia 3306
     user : 'root', //kehitystarkoituksessa voidaan käyttää root-käyttäjää. Tuotannossa ei saa käyttää root-käyttäjää
-    password : 'Yp2994rdSA', //voi olla tyhjäkin, käyttäkää mikä teillä on
+    password : '', //voi olla tyhjäkin, käyttäkää mikä teillä on
     database : 'asiakas'
 });
 
