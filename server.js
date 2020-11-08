@@ -1,10 +1,11 @@
 
-// Asenna ensin express npm install express --save
+// npm install express --save
 
 var express = require('express');
-var app=express();
+var app = express();
+var fs = require("fs");
 
-// Otetaan käyttöön body-parser, jotta voidaan html-requestista käsitellä viestin body post requestia varten... *
+// Otetaan käyttöön body-parser, jotta voidaan html-requestista käsitellä viestin body post requestia varten
 var bodyParser = require('body-parser');
 // Pyyntöjen reitittämistä varten voidaan käyttää Controllereita
 var customerController = require('./customerController');
@@ -17,58 +18,48 @@ const port = process.env.PORT || 3002;
 
 
 //CORS middleware
-var allowCrossDomain = function(req, res, next) {
-
-    // Jos haluttaisiin avata hakuja joidenkin ehtojen perusteella, niin määritettäisiin näin: 
+var allowCrossDomain = function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
+
     next();
 }
 // Otetaan käyttöön CORS säännöt:
 app.use(allowCrossDomain);
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json()); //* ...jsonina
+app.use(bodyParser.json());
 
 
-// Staattiset tiedostot, esim. kuvat, tyylitiedostot, scriptit käyttöliittymää varten
+// Staattiset tiedostot käyttöliittymää varten
 app.use(express.static('public'));
 
 // REST API Asiakas
-app.route('/Types') // route reitittää pyynnön merkkijonon ja metodin perusteella customerControlleriin
+app.route('/Types')//haetaan asiakastyypit sivulle
     .get(customerController.fetchTypes);
 
+app.route('/Asiakas')//kaikki asiakkaat
+    .get(customerController.fetchAll);
 
-app.route('/Asiakas')
-    .get(customerController.fetchAll)
-    .post(customerController.create);
-
-app.route('/Asiakas/:id') //esim. http://127.0.0.1:3002/asiakas/122
-    .put(customerController.update)
-    .delete(customerController.delete);
-//
+app.route('/Haku')//Haetaan asiakkaita
+    .get(customerController.fetchWhere);
 
 app.get('/', function(request, response){
     response.statusCode = 200;
-    response.setHeader('Content-Type', 'text/plain');
-    response.end("Terve maailma"); 
+    response.setHeader('Content-Type', 'text/html');
+    fs.readFile("index.html", function(err, data){
+      response.writeHead(200, {'Content-Type' : 'text/html'});
+      response.write(data);
+      response.end();
+    });
 });
-app.get('/maali', function(request, response){
-    console.log(request.headers);
-    console.log(request.url);
-    console.log(request.method);
-    response.statusCode = 200;
-    response.setHeader('Content-Type', 'text/plain');
-    response.end("Maaleja pukkaa"); 
-});
-
-
 app.listen(port, hostname, () => {
-  console.log(`Server running AT http://${hostname}:${port}/`);
+    console.log(`Server running AT http://${hostname}:${port}/`);
 });
 
 /*
 app.listen(port, () => {
     console.log(`Server running AT http://${port}/`);
   });
-*/  
+*/
