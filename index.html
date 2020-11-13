@@ -92,7 +92,53 @@
             $("#Haku").click(function () {
                 fetch();
             });
-        });
+            $("#lisaa").dialog({
+                autoOpen: false,
+                modal: true,
+                width: 450,
+                buttons: {
+                    "Lisää asiakas": function () {
+                        //teht 9 tarkistaa parametrit
+                        if ($("#addname").val() != "" || $("#addaddress").val() != "" ||
+                            $("#addmail").val() != "" || $("#addloc").val() != "") {
+                            var asty = $("#addtype").val().substring(0, 1);
+                            asty = parseInt(asty);
+                            $.ajax({
+                                type: "POST",
+                                url: "http://127.0.0.1:3002/Lisaa",
+                                data: {
+                                    NIMI: ($("#addname").val()),
+                                    OSOITE: ($("#addaddress").val()),
+                                    POSTINRO: ($("#addmail").val()),
+                                    POSTITMP: ($("#addloc").val()),
+                                    ASTY_AVAIN: asty
+                                },
+                                success: function (data) {
+                                    $("#lisaa").dialog("close");
+                                    fetch();
+                                    alert("Tiedot lisätty onnistuneesti!");
+                                },
+                                error: function () {
+                                    alert("Tietojen lisääminen epäonnistui");
+                                }
+                            })
+
+                        }
+                        //teht 9 jos arvot ovat tyhjiä
+                        else {
+                            alert("Älä jätä tyhjiä tekstikenttiä!");
+                        }
+                    },
+                    "Peruuta": function () {
+                        $("#lisaa").dialog("close");
+                    }
+                }
+            });
+
+            $("#linkkiLisaa").click(function () {
+                $("#lisaa").dialog("open");
+            })
+        })
 
     </script>
     <script src=".\jquery-ui-1.12.1\external\jquery\jquery.js"></script>
@@ -116,6 +162,18 @@
         </tr>
 
     </table>
+    <br>
+    <h4>Lisää Asiakas</h4>
+    <div id="add" title="Lisää uusi asiakas">
+        <form>
+            Nimi: <input type="text" id="addname" name="nimi"><br>
+            Osoite: <input type="text" id="addaddress" name="osoite"><br>
+            Postinumero: <input type="text" id="addmail" name="postinro"><br>
+            Toimipaikka: <input type="text" id="addloc" name="postitmp"><br>
+            Asiakastyyppi: <select id="addtype" name="asty_avain"></select>
+            <button id="btnadd">Lisää</button><br>
+        </form>
+    </div>
 </body>
 
 </html>

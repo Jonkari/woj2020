@@ -40,10 +40,15 @@ app.route('/Types')//haetaan asiakastyypit sivulle
     .get(customerController.fetchTypes);
 
 app.route('/Asiakas')//kaikki asiakkaat
-    .get(customerController.fetchAll);
+    .get(customerController.fetchAll)
+    .post(customerController.create);
 
 app.route('/Haku')//Haetaan asiakkaita
     .get(customerController.fetchWhere);
+
+app.route('/Asiakas/:id')
+    .put(customerController.update)
+    .delete(customerController.delete);
 
 app.get('/', function(request, response){
     response.statusCode = 200;
