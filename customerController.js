@@ -90,10 +90,21 @@ module.exports =
       }
   }
     )},
-    
-  update: function (req, res){
-
-  },
+    //Node.js teht 10. Asiakastietojen muokkaus
+    update : function(req, res) {
+      connection.query("UPDATE asiakas SET nimi=?, osoite=?, postinro=?, postitmp=?, asty_avain=? WHERE avain=?", 
+      [req.body.nimi, req.body.osoite, req.body.postinro, req.body.postitmp, req.body.asty_avain, req.params.id],
+      function(error, results, fields) {
+        if(error) {
+          console.log(error);
+          res.status(500);
+          res.json({"status" : "Error"})
+        } else {
+          res.status(200);
+          res.json({"status" : "Success"});
+        }
+      })
+    },
 
   //teht 6 asiakkaan poistaminen
   delete: function (req, res) {

@@ -8,148 +8,16 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <title>Node.js tehtävä</title>
-    <script>//jostain syystä erillinen javascripti ei halunnut lähteä pelittämään, joten olkoot nyt toistaiseksi tässä, korjaan varmaan paremmalla ajalla
-        $(document).ready(function () {
-
-            var $valinnat = $("select");
-            $("#asty").append("<option> </option>");
-            var asty_avain = asty_avain;
-            var selite = selite;
-            $.get({
-                url: ("http://127.0.0.1:3002/Types"),
-                data: {
-                    AVAIN: asty_avain,
-                    SELITE: selite
-                },
-                success: function (valinnat) {
-                    $.each(valinnat, function (i, av) {
-                        $valinnat.append("<option>" + av.AVAIN + " - " + av.SELITE + "</option>");
-                    })
-                }
-            });
-
-            function fetch() {
-                $("table td").remove();
-                var $lista = $("table");
-                var nimi = $("#nimi").val();
-                var osoite = $("#osoite").val();
-                var asTyyp = $("select").val().substring(0, 1);
-                var avain = avain;
-                var postnum = postnum;
-                var posttoim = posttoim;
-
-                //jos parametreja ei ole annettu, haetaan kaikki asiakkaat
-                if ($("#nimi").val() == "" && $("#osoite").val() == "" && $("select").val() == " ") {
-                    $.get({
-                        url: ("http://127.0.0.1:3002/Asiakas"),
-                        data: {
-                            AVAIN: avain,
-                            NIMI: nimi,
-                            OSOITE: osoite,
-                            POSTINRO: postnum,
-                            POSTITMP: posttoim,
-                            ASTY_AVAIN: asTyyp
-                        },
-                        success: function (lista) {
-                            $.each(lista, function (i, hlo) {
-                                $lista.append("<tr> <td>" + hlo.AVAIN + "<td>"
-                                    + hlo.NIMI + "<td>" + hlo.OSOITE + "<td>"
-                                    + hlo.POSTINRO + "<td>" + hlo.POSTITMP + "<td>"
-                                    + hlo.ASTY_AVAIN + "</tr>");
-                            });
-                        },
-                        error: function () {
-                            alert("Haku epäonnistui!");
-                        }
-                    })
-                }
-                else {//jos edes yhdessä on parametreja, haetaan asiakkaita parametrien perusteella
-                    $.get({
-                        url: ("http://127.0.0.1:3002/Haku"),
-                        data: {
-                            AVAIN: avain,
-                            NIMI: nimi,
-                            OSOITE: osoite,
-                            POSTINRO: postnum,
-                            POSTITMP: posttoim,
-                            ASTY_AVAIN: asTyyp
-                        },
-                        success: function (lista) {
-                            $.each(lista, function (i, hlo) {
-                                $lista.append("<tr> <td>" + hlo.AVAIN + "<td>"
-                                    + hlo.NIMI + "<td>" + hlo.OSOITE + "<td>"
-                                    + hlo.POSTINRO + "<td>" + hlo.POSTITMP + "<td>"
-                                    + hlo.ASTY_AVAIN  + "</tr>");
-                            })
-                        },
-                        error: function () {
-                            alert("Haku epäonnistui!");
-                        }
-                    });
-                }
-            }
-
-            $("#Haku").click(function () {
-                fetch();
-            });
-            $("#lisaa").dialog({
-                autoOpen: false,
-                modal: true,
-                width: 450,
-                buttons: {
-                    "Lisää asiakas": function () {
-                        //teht 9 tarkistaa parametrit
-                        if ($("#addname").val() != "" || $("#addaddress").val() != "" ||
-                            $("#addmail").val() != "" || $("#addloc").val() != "") {
-                            var asty = $("#addtype").val().substring(0, 1);
-                            asty = parseInt(asty);
-                            $.ajax({
-                                type: "POST",
-                                url: "http://127.0.0.1:3002/Lisaa",
-                                data: {
-                                    NIMI: ($("#addname").val()),
-                                    OSOITE: ($("#addaddress").val()),
-                                    POSTINRO: ($("#addmail").val()),
-                                    POSTITMP: ($("#addloc").val()),
-                                    ASTY_AVAIN: asty
-                                },
-                                success: function (data) {
-                                    $("#lisaa").dialog("close");
-                                    fetch();
-                                    alert("Tiedot lisätty onnistuneesti!");
-                                },
-                                error: function () {
-                                    alert("Tietojen lisääminen epäonnistui");
-                                }
-                            })
-
-                        }
-                        //teht 9 jos arvot ovat tyhjiä
-                        else {
-                            alert("Älä jätä tyhjiä tekstikenttiä!");
-                        }
-                    },
-                    "Peruuta": function () {
-                        $("#lisaa").dialog("close");
-                    }
-                }
-            });
-
-            $("#linkkiLisaa").click(function () {
-                $("#lisaa").dialog("open");
-            })
-        })
-
-    </script>
+    <script src="js/script.js"></script>
     <script src=".\jquery-ui-1.12.1\external\jquery\jquery.js"></script>
     <script src=".\jquery-ui-1.12.1\jquery-ui.js"></script>
 </head>
 
 <body>
-    Nimi: <input type="text" id="nimi">
-    Osoite: <input type="text" id="osoite">
+    Nimi: <input type="text" id="nimiIn">
+    Osoite: <input type="text" id="osoiteIn">
     Asiakastyyppi: <select id="asty"></select>
-    <button id="Haku">Hae</button><br>
+    <button id="btnHae">Hae</button><br>
     <br>
     <table>
         <tr>
@@ -157,23 +25,34 @@
             <th>Nimi</th>
             <th>Osoite</th>
             <th>Postinumero</th>
-            <th>Toimipaikka</th>
+            <th>Postitoimipaikka</th>
             <th>Asiakastyyppi</th>
         </tr>
 
     </table>
     <br>
-    <h4>Lisää Asiakas</h4>
-    <div id="add" title="Lisää uusi asiakas">
-        <form>
-            Nimi: <input type="text" id="addname" name="nimi"><br>
-            Osoite: <input type="text" id="addaddress" name="osoite"><br>
-            Postinumero: <input type="text" id="addmail" name="postinro"><br>
-            Toimipaikka: <input type="text" id="addloc" name="postitmp"><br>
-            Asiakastyyppi: <select id="addtype" name="asty_avain"></select>
-            <button id="btnadd">Lisää</button><br>
+    <br>
+    <h4>Lisää asiakas</h4>
+
+    <div id="lisaa" title="Lisää uusi asiakas">
+
+        <form id="lisaaAsiakas" title="Lisää asiakas">
+            Nimi: <input type="text" id="nimiLisaa" name="nimi"><br>
+            Osoite: <input type="text" id="osoiteLisaa" name="osoite"><br>
+            Postinumero: <input type="text" id="postnumLisaa" name="postinro"><br>
+            Postitoimipaikka: <input type="text" id="postToimLisaa" name="postitmp"><br>
+            Asiakastyyppi: <select id="astyLisaa" name="asty_avain"></select><br>
+            <button id="btnlisaa">Lisää</button>
         </form>
     </div>
+
+    <div id="muokkaatiedot" title="Muokkaa asiakastietoja">
+
+        <form id="muokkaaAsiakas" title="Muokkaa asiakastietoja">
+            
+        </form>
+    </div>
+
 </body>
 
 </html>
