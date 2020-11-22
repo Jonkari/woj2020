@@ -1,0 +1,28 @@
+{{#if sarjataulukko}}
+    <table>
+        <tr>
+            <th>Joukkue_id</th>
+            <th>Ottelumaara</th>
+            <th>Voittoja</th>
+            <th>Tappioita</th>
+            <th>Tasapeleja</th>
+            <th>Tehdyt maalit</th>
+            <th>Päästetyt maalit</th>
+            <th>Pisteet</th>
+        </tr>
+    {{#each sarjataulukko}}
+        <tr>
+            <td>{{this.Nimi}}</td>
+            <td>{{this.Ottelumaara}}</td>
+            <td>{{this.Voittoja}}</td>
+            <td>{{this.Tappioita}}</td>
+            <td>{{this.Tasapeleja}}</td>
+            <td>{{this.Tehdyt_maalit}}</td>
+            <td>{{this.Paastetyt_maalit}}</td>
+            <td>{{this.Pisteet}}</td>
+        </tr>
+    {{/each}}
+    </table>
+{{else}}
+    <p>Virhe haettaessa dataa</p>
+{{/if}}
